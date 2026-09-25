@@ -25,8 +25,8 @@ public class Bank {
     @Id
     @GeneratedValue (strategy = GenerationType.IDENTITY)
     
-    private int id;
+    private Integer id;
     private String name;
-    private LocalDate created_at;
-    private int created_by;
+    private LocalDate createdAt;
+    private Integer createdBy;
 }

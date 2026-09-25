@@ -43,4 +43,9 @@ public class DepartmentService {
         departmentRepository.save(oldDepartment);
         return "Departemen berhasil di update";
     }
+
+    public String delete(Integer id) {
+        departmentRepository.deleteById(id);
+        return "Departemen berhasil di hapus";
+    }
 }

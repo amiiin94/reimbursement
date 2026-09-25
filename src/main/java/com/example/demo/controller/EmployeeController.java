@@ -32,4 +32,6 @@ public class EmployeeController {
     public ResponseEntity<Object> getAll(@PathVariable (name = "id") Integer id) {
         return Response.generate(employeeService.getEmployee(id), "Request berhasil dieksekusi");
     }
+
+
 }

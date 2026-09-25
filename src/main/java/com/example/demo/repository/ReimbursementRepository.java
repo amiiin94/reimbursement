@@ -10,6 +10,8 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.example.demo.model.Reimbursement;
+import com.example.demo.model.dto.request.ReimbursementItem;
+import com.example.demo.model.dto.response.ReimbursementResponse;
 
 @Repository 
 public interface ReimbursementRepository extends JpaRepository<Reimbursement, Integer> {
@@ -30,4 +32,14 @@ public interface ReimbursementRepository extends JpaRepository<Reimbursement, In
         @Param("p_status") String status,
         @Param("p_items_json") String itemsJson
     );
-   }
+
+    @Query(
+        """
+            SELECT new com.example.demo.model.dto.response.ReimbursementResponse
+            (r.requestNumber, r.submitDate, r.Description, r.status)
+            FROM Reimbursement r
+            WHERE r.employee.id = ?1
+        """
+    )
+    List<ReimbursementResponse> findByEmployee_Id(Integer employeeId);
+}

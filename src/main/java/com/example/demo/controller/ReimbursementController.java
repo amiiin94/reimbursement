@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -20,6 +21,11 @@ public class ReimbursementController {
 
     @Autowired 
     private ReimbursementService reimbursementService;
+
+    @GetMapping ("reimbursement/user/{userId}")
+    public ResponseEntity<Object> getByUserId(@PathVariable Integer userId) {
+        return Response.generate(reimbursementService.getByUserId(userId), "Data reimbursement berhasil ditampilkan");
+    }
 
     @PostMapping("reimbursement/insert")
     public ResponseEntity<Object> insert(@RequestBody InsertReimbursement insertReimbursement) {

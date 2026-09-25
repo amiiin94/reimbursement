@@ -28,6 +28,9 @@ public class RoleController {
     }
 
     @GetMapping ("role/{id}")
+    public ResponseEntity<Object> getById(@PathVariable Integer id) {
+        return Response.generate(roleService.getRoleById(id), "Role berhasil ditampilkan");
+    }
 
     @PostMapping ("role/insert")
     public String insert(@RequestBody Role role) {
@@ -37,7 +40,7 @@ public class RoleController {
     @PutMapping("role/update/{id}")
     public ResponseEntity<Object> update(@PathVariable Integer id, @RequestBody Role role) {
         roleService.update(id, role);
-        return Response.generate(roleService.update(id, role));
+        return Response.generate(roleService.update(id, role), "Role berhasil di update");
     }
 
     @DeleteMapping ("role/delete/{id}")

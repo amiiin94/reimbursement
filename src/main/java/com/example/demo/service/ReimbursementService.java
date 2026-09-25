@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.demo.model.dto.response.ReimbursementResponse;
 import com.example.demo.model.dto.request.InsertReimbursement;
 import com.example.demo.model.dto.request.ReimbursementItem;
 import com.example.demo.model.dto.request.UpdateReimbursement;
@@ -21,6 +22,10 @@ public class ReimbursementService {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    public List<ReimbursementResponse> getByUserId(Integer userId) {
+        return reimbursementRequestRepository.findByEmployee_Id(userId);
+    }
 
     @Transactional 
     public Integer insert(InsertReimbursement insertReimbursement) {

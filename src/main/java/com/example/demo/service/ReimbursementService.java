@@ -27,6 +27,10 @@ public class ReimbursementService {
         return reimbursementRequestRepository.findByEmployee_Id(userId);
     }
 
+    public List<ReimbursementItem> getItem(Integer reimbursementId) {
+        return reimbursementRequestRepository.findItemByReimbursementId(reimbursementId);
+    }
+
     @Transactional 
     public Integer insert(InsertReimbursement insertReimbursement) {
         List<ReimbursementItem> items = new ArrayList<>();

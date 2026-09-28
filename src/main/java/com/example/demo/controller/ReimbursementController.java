@@ -39,4 +39,9 @@ public class ReimbursementController {
 
         return Response.generate("Request berhasil di update");
     }
+
+    @GetMapping ("reimbursement/item/{id}")
+    public ResponseEntity<Object> getItem(@PathVariable Integer id) {
+        return Response.generate(reimbursementService.getItem(id), "Reimbursement Item berhasil diambil");
+    }
 }

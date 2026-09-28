@@ -42,4 +42,20 @@ public interface ReimbursementRepository extends JpaRepository<Reimbursement, In
         """
     )
     List<ReimbursementResponse> findByEmployee_Id(Integer employeeId);
+
+    @Query(
+        """
+                SELECT new com.example.demo.model.dto.request.ReimbursementItem(
+                    i.categoryId,
+                    i.description,
+                    i.amount,
+                    i.expenseDate,
+                    i.attachmentUrl
+                )
+                FROM ReimbursementItem i
+                WHERE i.reimbursementRequest.id = ?1
+        """
+    )
+    public List<ReimbursementItem> findItemByReimbursementId(Integer id);
+
 }

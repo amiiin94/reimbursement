@@ -1,5 +1,6 @@
 package com.example.demo.model;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 import javax.persistence.Entity;
@@ -25,7 +26,11 @@ public class ReimbursementItem {
     @Id
     @GeneratedValue (strategy = GenerationType.IDENTITY)
     private Integer id;
-    private String name;
+    private Integer categoryId;
+    private String description;
+    private BigDecimal amount;
+    private LocalDate expenseDate;
+    private String attachmentUrl;
     private LocalDate createdAt;
     private Integer createdBy;
 

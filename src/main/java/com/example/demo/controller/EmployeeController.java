@@ -1,20 +1,17 @@
 package com.example.demo.controller;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.helper.Response;
-import com.example.demo.model.dto.response.User;
+import com.example.demo.model.Employee;
 import com.example.demo.service.EmployeeService;
 
 @RestController
@@ -33,5 +30,13 @@ public class EmployeeController {
         return Response.generate(employeeService.getEmployee(id), "Request berhasil dieksekusi");
     }
 
+    @PostMapping ("employee/insert")
+    public ResponseEntity<Object> insert(@RequestBody Employee employee) {
+        return Response.generate(employeeService.insert(employee));
+    }
 
+    @PutMapping ("employee/update/{id}")
+    public ResponseEntity<Object> update(@PathVariable (name = "id") Integer id, @RequestBody Employee employee) {
+        return Response.generate(employeeService.update(id, employee));
+    }
 }

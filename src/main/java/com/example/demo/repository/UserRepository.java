@@ -20,5 +20,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     
     public Login login(String officeEmail, String password); 
 
+    public java.util.Optional<User> findByOfficeEmail(String officeEmail);
+
     
 }

@@ -21,6 +21,10 @@ import javax.persistence.Table;
 @Builder 
 @Data
 public class Employee {
+    public Employee(Integer id) {
+        this.id = id;
+    }
+
     @Id
     @GeneratedValue (strategy = GenerationType.IDENTITY)
     private Integer id;

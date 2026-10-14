@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,11 +19,14 @@ public class ApprovalController {
     @Autowired
     private ApprovalService approvalService;
 
-
     @PostMapping("approval/process")
     public ResponseEntity<Object> processApproval(@RequestBody ApprovalRequest request) {
         approvalService.processApproval(request);
         return Response.generate("Approval processed successfully");
     }
 
+    @GetMapping ("approval")
+    public ResponseEntity<Object> getApproval() {
+        return Response.generate(approvalService.getApproval(), "Approval berhasil diambil");
+    }
 }

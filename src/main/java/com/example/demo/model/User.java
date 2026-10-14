@@ -1,8 +1,8 @@
 package com.example.demo.model;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -28,7 +28,10 @@ public class User {
     @Id
     @GeneratedValue (strategy = GenerationType.IDENTITY)
     private Integer id;
+
+    @Column(name = "office_email", unique = true, nullable = false)
     private String officeEmail;
+
     private String password;
     private LocalDateTime createdAt;
     private Integer createdBy;

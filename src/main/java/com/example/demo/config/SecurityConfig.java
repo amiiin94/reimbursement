@@ -34,14 +34,16 @@ public class SecurityConfig {
     @Bean 
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
+                .cors().and()
                 .csrf(csrf -> csrf.disable())
-                .authorizeHttpRequests(auth -> {
-                    auth.antMatchers("/api/auth/**", "/api/user/login", "/error", "/api/user/insert").permitAll();
-                    auth.antMatchers("/api/employee/**").hasAnyRole("admin");
-                    auth.antMatchers("/api/reimbursement/insert", "api/reimbursement/update").hasAnyRole("employee");
-                    auth.antMatchers("/api/approval/**").hasAnyRole("finance_approver");
-                    auth.anyRequest().authenticated();
-                })
+                // .authorizeHttpRequests(auth -> {
+                //     auth.antMatchers("/api/auth/**", "/api/user/login", "/error").permitAll();
+                //     auth.antMatchers("/api/user/insert").hasAnyRole("admin");
+                //     auth.antMatchers("/api/employee/**").hasAnyRole("admin");
+                //     auth.antMatchers("/api/reimbursement/insert", "/api/reimbursement/update").hasAnyRole("employee");
+                //     auth.antMatchers("/api/approval/**").hasAnyRole("finance_approver");
+                //     auth.anyRequest().authenticated();
+                // })
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)

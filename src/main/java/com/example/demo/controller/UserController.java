@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.demo.helper.Response;
 import com.example.demo.model.dto.request.AuthUser;
 import com.example.demo.model.dto.request.InsertUser;
-import com.example.demo.model.dto.request.Login;
 import com.example.demo.service.UserService;
 
 @RestController 
@@ -20,16 +19,12 @@ public class UserController {
     @Autowired 
     private UserService userService;
 
-    @PostMapping ("auth/login")
+    @PostMapping ("user/login")
     public ResponseEntity<Object> authLogin(@RequestBody AuthUser authUser) {
-        try {
-            return Response.generate(userService.loginWithJwt(authUser.getEmail(), authUser.getPassword()), "Login Berhasil");
-        } catch (Exception e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.UNAUTHORIZED);
-        }
+        return Response.generate(userService.loginWithJwt(authUser.getEmail(), authUser.getPassword()), "Login Berhasil");
     }
 
-    @PostMapping ("user/insert")
+    @PostMapping ("user/register")
     public ResponseEntity<Object> insert(@RequestBody InsertUser insertUser) {
         return Response.generate(userService.insert(insertUser));
     }

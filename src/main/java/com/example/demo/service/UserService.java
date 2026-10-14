@@ -12,7 +12,6 @@ import com.example.demo.model.Employee;
 import com.example.demo.model.Role;
 import com.example.demo.model.User;
 import com.example.demo.model.dto.request.InsertUser;
-import com.example.demo.model.dto.request.Login;
 import com.example.demo.model.dto.response.AuthUser;
 import com.example.demo.repository.EmployeeRepository;
 import com.example.demo.repository.RoleRepository;
@@ -35,14 +34,12 @@ public class UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-
     public AuthUser loginWithJwt(String officeEmail, String password) {
         User user = userRepository.findByOfficeEmail(officeEmail).orElse(null);
         if (user == null) {
             throw new RuntimeException("Email atau password salah");
         }
 
-        // Support both BCrypt and plain-text passwords
         boolean passwordMatches = passwordEncoder.matches(password, user.getPassword());
         if (!passwordMatches) {
             throw new RuntimeException("Email atau password salah");
@@ -59,25 +56,39 @@ public class UserService {
     }
 
     public String insert(InsertUser insertUser) {
-        Employee employee = employeeRepository.findById(insertUser.getEmployeeId()).orElse(null);
+        if (userRepository.findByOfficeEmail(insertUser.getOfficeEmail()).isPresent()) {
+            throw new IllegalArgumentException("Office email sudah terdaftar: " + insertUser.getOfficeEmail());
+        }
 
-        Role role = roleRepository.findById(insertUser.getRoleId()).orElse(null);
+        Employee employee = employeeRepository.findById(insertUser.getEmployeeId())
+                .orElseThrow(() -> new IllegalArgumentException("Employee tidak ditemukan dengan id: " + insertUser.getEmployeeId()));
 
-        try {
-            User user = User.builder()
+        Role role = roleRepository.findById(insertUser.getRoleId())
+                .orElseThrow(() -> new IllegalArgumentException("Role tidak ditemukan dengan id: " + insertUser.getRoleId()));
+
+        User user = User.builder()
                 .employee(employee)
                 .role(role)
                 .officeEmail(insertUser.getOfficeEmail())
                 .password(passwordEncoder.encode(insertUser.getPassword()))
                 .createdAt(LocalDateTime.now())
-                .createdBy(1)
+                .createdBy(getCurrentUserId())
                 .build();
 
-            userRepository.save(user);
+        userRepository.save(user);
+        return "User berhasil ditambahkan";
+    }
 
-            return "User berhasil ditambahkan";
-        } catch (Exception e) {
-            return "Gagal menambahkan user: " + e.getMessage();
+    private Integer getCurrentUserId() {
+        try {
+            org.springframework.security.core.Authentication auth = 
+                org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
+            if (auth != null && auth.isAuthenticated() && !"anonymousUser".equals(auth.getPrincipal())) {
+                String email = auth.getName();
+                return userRepository.findByOfficeEmail(email).map(User::getId).orElse(1);
+            }
+        } catch (Exception ignored) {
         }
+        return 1;
     }
 }

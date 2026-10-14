@@ -1,6 +1,6 @@
 package com.example.demo.service;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,12 +26,17 @@ public class CustomUserDetailsService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("User tidak ditemukan dengan email: " + email));
 
         String roleName = (user.getRole() != null && user.getRole().getName() != null)
-                ? user.getRole().getName()
+                ? user.getRole().getName().trim()
                 : "USER";
 
-        List<GrantedAuthority> authorities = Collections.singletonList(
-                new SimpleGrantedAuthority(roleName)
-        );
+        List<GrantedAuthority> authorities = new ArrayList<>();
+        if (roleName.toUpperCase().startsWith("ROLE_")) {
+            authorities.add(new SimpleGrantedAuthority(roleName));
+            authorities.add(new SimpleGrantedAuthority(roleName.substring(5)));
+        } else {
+            authorities.add(new SimpleGrantedAuthority("ROLE_" + roleName));
+            authorities.add(new SimpleGrantedAuthority(roleName));
+        }
 
         return new org.springframework.security.core.userdetails.User(
                 user.getOfficeEmail(),
@@ -40,3 +45,4 @@ public class CustomUserDetailsService implements UserDetailsService {
         );
     }
 }
+

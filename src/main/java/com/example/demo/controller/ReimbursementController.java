@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,14 +30,13 @@ public class ReimbursementController {
 
     @PostMapping("reimbursement/insert")
     public ResponseEntity<Object> insert(@RequestBody InsertReimbursement insertReimbursement) {
-        Integer newRequestId = reimbursementService.insert(insertReimbursement);
-        return Response.generate(newRequestId, "Request berhasil dieksekusi");
+        reimbursementService.insert(insertReimbursement);
+        return Response.generate("Request berhasil dieksekusi", HttpStatus.CREATED);
     }
 
     @PutMapping ("reimbursement/update")
     public ResponseEntity<Object> update (@RequestBody UpdateReimbursement updateReimbursement) {
         reimbursementService.update(updateReimbursement);
-
         return Response.generate("Request berhasil di update");
     }
 

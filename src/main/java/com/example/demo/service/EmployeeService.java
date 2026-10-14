@@ -4,16 +4,22 @@ import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.model.Employee;
 import com.example.demo.model.dto.response.User;
 import com.example.demo.repository.EmployeeRepository;
+import com.example.demo.repository.UserRepository;
 
 @Service 
 public class EmployeeService {
     @Autowired 
     private EmployeeRepository employeeRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     public List<User> getAllEmployee() {
         return employeeRepository.getEmployee();
@@ -21,64 +27,72 @@ public class EmployeeService {
 
     public User getEmployee(int id) {
         if (id <= 0) {
-            return null;
+            throw new IllegalArgumentException("ID employee tidak valid: " + id);
         }
 
-        return employeeRepository.getEmployee(id);
+        User employee = employeeRepository.getEmployee(id);
+        if (employee == null) {
+            throw new IllegalArgumentException("Employee tidak ditemukan dengan id: " + id);
+        }
+        return employee;
     }
 
     public Employee getById(Integer id) {
-        return employeeRepository.findById(id).orElse(null);
+        return employeeRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Employee tidak ditemukan dengan id: " + id));
     }
 
     public String insert(Employee employee) {
-        try {
-            if (employee.getCreatedAt() == null) {
-                employee.setCreatedAt(LocalDate.now());
-            }
-            if (employee.getCreatedBy() == null) {
-                employee.setCreatedBy(1);
-            }
-            employeeRepository.save(employee);
-            return "Employee berhasil ditambahkan";
-        } catch (Exception e) {
-            return "Employee gagal ditambahkan: " + e.getMessage();
+        if (employee.getCreatedAt() == null) {
+            employee.setCreatedAt(LocalDate.now());
         }
+        if (employee.getCreatedBy() == null) {
+            employee.setCreatedBy(getCurrentUserId());
+        }
+        employeeRepository.save(employee);
+        return "Employee berhasil ditambahkan";
     }
 
     public String update(Integer id, Employee employee) {
-        Employee oldEmployee = employeeRepository.findById(id).orElse(null);
-        if (oldEmployee == null) {
-            return "Employee tidak ditemukan";
+        Employee oldEmployee = employeeRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Employee tidak ditemukan dengan id: " + id));
+
+        if (employee.getName() != null) {
+            oldEmployee.setName(employee.getName());
+        }
+        if (employee.getEmail() != null) {
+            oldEmployee.setEmail(employee.getEmail());
+        }
+        if (employee.getAccountNum() != null) {
+            oldEmployee.setAccountNum(employee.getAccountNum());
+        }
+        if (employee.getAccountName() != null) {
+            oldEmployee.setAccountName(employee.getAccountName());
+        }
+        if (employee.getDepartment() != null) {
+            oldEmployee.setDepartment(employee.getDepartment());
+        }
+        if (employee.getBank() != null) {
+            oldEmployee.setBank(employee.getBank());
+        }
+        if (employee.getEmployee() != null) {
+            oldEmployee.setEmployee(employee.getEmployee());
         }
 
+        employeeRepository.save(oldEmployee);
+        return "Employee berhasil diupdate";
+    }
+
+    private Integer getCurrentUserId() {
         try {
-            if (employee.getName() != null) {
-                oldEmployee.setName(employee.getName());
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            if (auth != null && auth.isAuthenticated() && !"anonymousUser".equals(auth.getPrincipal())) {
+                String email = auth.getName();
+                return userRepository.findByOfficeEmail(email).map(com.example.demo.model.User::getId).orElse(1);
             }
-            if (employee.getEmail() != null) {
-                oldEmployee.setEmail(employee.getEmail());
-            }
-            if (employee.getAccountNum() != null) {
-                oldEmployee.setAccountNum(employee.getAccountNum());
-            }
-            if (employee.getAccountName() != null) {
-                oldEmployee.setAccountName(employee.getAccountName());
-            }
-            if (employee.getDepartment() != null) {
-                oldEmployee.setDepartment(employee.getDepartment());
-            }
-            if (employee.getBank() != null) {
-                oldEmployee.setBank(employee.getBank());
-            }
-            if (employee.getEmployee() != null) {
-                oldEmployee.setEmployee(employee.getEmployee());
-            }
-
-            employeeRepository.save(oldEmployee);
-            return "Employee berhasil diupdate";
-        } catch (Exception e) {
-            return "Employee gagal diupdate: " + e.getMessage();
+        } catch (Exception ignored) {
         }
+        return 1;
     }
 }
+

@@ -12,7 +12,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -28,7 +27,7 @@ public class Reimbursement {
     private Integer id;
     private String requestNumber;
     private LocalDate submitDate;
-    private String Description;
+    private String description;
     private String status;
     private LocalDate createdAt;
     private Integer createdBy;

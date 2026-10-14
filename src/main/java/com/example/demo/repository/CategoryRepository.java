@@ -22,7 +22,5 @@ public interface CategoryRepository extends JpaRepository<Category, Integer>{
         """
     )
 
-    public List<Category> getAllCategory();
-
-    
+    public List<Category> getAllCategory(); 
 }

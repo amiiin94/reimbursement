@@ -4,14 +4,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.demo.model.dto.response.ReimbursementResponse;
+import com.example.demo.model.User;
 import com.example.demo.model.dto.request.InsertReimbursement;
 import com.example.demo.model.dto.request.ReimbursementItem;
 import com.example.demo.model.dto.request.UpdateReimbursement;
+import com.example.demo.model.dto.response.ReimbursementResponse;
 import com.example.demo.repository.ReimbursementRepository;
+import com.example.demo.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service 
@@ -32,40 +37,30 @@ public class ReimbursementService {
     }
 
     @Transactional 
-    public Integer insert(InsertReimbursement insertReimbursement) {
-        List<ReimbursementItem> items = new ArrayList<>();
-        if (insertReimbursement.getItems() != null && !insertReimbursement.getItems().isEmpty()) {
-            items.addAll(insertReimbursement.getItems());
-        } else if (insertReimbursement.getReimbursementRequestItem() != null) {
-            items.add(insertReimbursement.getReimbursementRequestItem());
-        }
-
+    public void insert(InsertReimbursement insertReimbursement) {
+        Integer employeeId = insertReimbursement.getEmployeeId();
+        List<ReimbursementItem> items = insertReimbursement.getItems();
         String itemsJson = serializeItems(items);
+        String status = insertReimbursement.getStatus();
 
-        return reimbursementRequestRepository.insert(
-            insertReimbursement.getEmployeeId(),
+        reimbursementRequestRepository.insert(
+            employeeId,
             insertReimbursement.getDescription(),
-            insertReimbursement.getStatus(),
+            status,
             itemsJson
         );
     }
 
     @Transactional 
     public String update(UpdateReimbursement updateReimbursement) {
-        List<ReimbursementItem> items = new ArrayList<>();
-        if (updateReimbursement.getItems() != null && !updateReimbursement.getItems().isEmpty()) {
-            items.addAll(updateReimbursement.getItems());
-        } else if (updateReimbursement.getReimbursementRequestItem() != null) {
-            items.add(updateReimbursement.getReimbursementRequestItem());
-        }
-
-        String itemJson = serializeItems(items);
+        List<ReimbursementItem> items = updateReimbursement.getItems();
+        String itemsJson = serializeItems(items);
 
         reimbursementRequestRepository.update(
             updateReimbursement.getReimbursementId(),
             updateReimbursement.getDescription(),
             updateReimbursement.getStatus(),
-            itemJson
+            itemsJson
         );
 
         return "Reimbursement Berhasil di update";
@@ -78,7 +73,8 @@ public class ReimbursementService {
             }
             return null;
         } catch (Exception e) {
-            throw new RuntimeException("Failed to serialize items to JSON: " + e.getMessage(), e);
+            throw new RuntimeException("Failed to serialize items to JSON");
         }
     }
 }
+

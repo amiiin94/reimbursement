@@ -12,6 +12,6 @@ import lombok.NoArgsConstructor;
 public class ReimbursementResponse {
     private String requestNumber;
     private LocalDate submitDate;
-    private String Description;
+    private String description;
     private String status;
 }

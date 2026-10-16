@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 public class ReimbursementResponse {
+    private Integer id;
     private String requestNumber;
     private LocalDate submitDate;
     private String description;

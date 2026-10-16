@@ -44,4 +44,14 @@ public class ReimbursementController {
     public ResponseEntity<Object> getItem(@PathVariable Integer id) {
         return Response.generate(reimbursementService.getItem(id), "Reimbursement Item berhasil diambil");
     }
+
+    @GetMapping ("reimbursement/supervisor/{supervisorId}")
+    public ResponseEntity<Object> getBySupervisorId(@PathVariable Integer supervisorId) {
+        return Response.generate(reimbursementService.getBySupervisorId(supervisorId), "reimbursement berhasil ditampilkan");
+    }
+
+    @GetMapping ("reimbursement/finance")
+    public ResponseEntity<Object> getByFinance() {
+        return Response.generate(reimbursementService.getByFinance(), "reimbursement berhasil diambil");
+    }
 }

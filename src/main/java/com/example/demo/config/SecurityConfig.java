@@ -16,8 +16,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.filter.CorsFilter;
 
 import com.example.demo.filter.JwtAuthFilter;
 
@@ -36,14 +36,14 @@ public class SecurityConfig {
         return http
                 .cors().and()
                 .csrf(csrf -> csrf.disable())
-                // .authorizeHttpRequests(auth -> {
-                //     auth.antMatchers("/api/auth/**", "/api/user/login", "/error").permitAll();
-                //     auth.antMatchers("/api/user/insert").hasAnyRole("admin");
-                //     auth.antMatchers("/api/employee/**").hasAnyRole("admin");
-                //     auth.antMatchers("/api/reimbursement/insert", "/api/reimbursement/update").hasAnyRole("employee");
-                //     auth.antMatchers("/api/approval/**").hasAnyRole("finance_approver");
-                //     auth.anyRequest().authenticated();
-                // })
+                .authorizeHttpRequests(auth -> {
+                    auth.antMatchers("/api/auth/**", "/api/user/login", "/error").permitAll();
+                    // auth.antMatchers("/api/user/insert").hasAnyRole("admin");
+                    // auth.antMatchers("/api/employee/**").hasAnyRole("admin");
+                    // auth.antMatchers("/api/reimbursement/insert", "/api/reimbursement/update").hasAnyRole("employee");
+                    // auth.antMatchers("/api/approval/**").hasAnyRole("finance_approver");
+                    auth.anyRequest().authenticated();
+                })
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
@@ -69,16 +69,16 @@ public class SecurityConfig {
     }
 
     @Bean 
-    public CorsFilter corsFilter() {
-        UrlBasedCorsConfigurationSource urlBasedCorsConfigurationSource = new UrlBasedCorsConfigurationSource();
+    public org.springframework.web.cors.CorsConfigurationSource corsConfigurationSource() {
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration configuration = new CorsConfiguration();
 
         configuration.setAllowCredentials(true);
-        configuration.addAllowedOrigin("http://localhost/");
+        configuration.addAllowedOrigin("http://localhost:3000");
         configuration.addAllowedHeader("*");
-        configuration.addAllowedHeader("*");
-        urlBasedCorsConfigurationSource.registerCorsConfiguration("/**", configuration);
+        configuration.addAllowedMethod("*");
+        source.registerCorsConfiguration("/**", configuration);
 
-        return new CorsFilter(urlBasedCorsConfigurationSource);
+        return source;
     }
 }

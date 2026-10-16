@@ -14,6 +14,7 @@ import com.example.demo.model.User;
 import com.example.demo.model.dto.request.InsertReimbursement;
 import com.example.demo.model.dto.request.ReimbursementItem;
 import com.example.demo.model.dto.request.UpdateReimbursement;
+import com.example.demo.model.dto.response.ReimbursementBySupervisor;
 import com.example.demo.model.dto.response.ReimbursementResponse;
 import com.example.demo.repository.ReimbursementRepository;
 import com.example.demo.repository.UserRepository;
@@ -34,6 +35,14 @@ public class ReimbursementService {
 
     public List<ReimbursementItem> getItem(Integer reimbursementId) {
         return reimbursementRequestRepository.findItemByReimbursementId(reimbursementId);
+    }
+
+    public List<ReimbursementBySupervisor> getBySupervisorId(Integer supervisorId) {
+        return reimbursementRequestRepository.findBySupervisorId(supervisorId);
+    }
+
+    public List<ReimbursementBySupervisor> getByFinance() {
+        return reimbursementRequestRepository.findByFinance();
     }
 
     @Transactional 

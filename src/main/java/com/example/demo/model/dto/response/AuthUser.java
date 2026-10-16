@@ -9,4 +9,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class AuthUser {
     private String token;
+    private Integer id;
 }

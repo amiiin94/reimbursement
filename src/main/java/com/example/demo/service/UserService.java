@@ -52,7 +52,7 @@ public class UserService {
         claims.put("Id", user.getId());
 
         String token = jwtService.createToken(claims, user.getOfficeEmail());
-        return new AuthUser(token);
+        return new AuthUser(token, user.getId());
     }
 
     public String insert(InsertUser insertUser) {

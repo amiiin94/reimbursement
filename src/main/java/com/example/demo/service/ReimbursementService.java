@@ -10,12 +10,16 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.demo.model.Reimbursement;
 import com.example.demo.model.User;
 import com.example.demo.model.dto.request.InsertReimbursement;
 import com.example.demo.model.dto.request.ReimbursementItem;
 import com.example.demo.model.dto.request.UpdateReimbursement;
+import com.example.demo.model.dto.response.ApprovalResponse;
 import com.example.demo.model.dto.response.ReimbursementBySupervisor;
+import com.example.demo.model.dto.response.ReimbursementDetailResponse;
 import com.example.demo.model.dto.response.ReimbursementResponse;
+import com.example.demo.repository.ApprovalRepository;
 import com.example.demo.repository.ReimbursementRepository;
 import com.example.demo.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -27,7 +31,30 @@ public class ReimbursementService {
     private ReimbursementRepository reimbursementRequestRepository;
 
     @Autowired
+    private ApprovalRepository approvalRepository;
+
+    @Autowired
     private ObjectMapper objectMapper;
+
+    public ReimbursementDetailResponse getById(Integer id) {
+        Reimbursement reimbursement = reimbursementRequestRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Reimbursement with id " + id + " not found"));
+
+        List<ReimbursementItem> items = reimbursementRequestRepository.findItemByReimbursementId(id);
+        List<ApprovalResponse> approvalHistory = approvalRepository.findByReimbursementRequestId(id);
+
+        return ReimbursementDetailResponse.builder()
+            .id(reimbursement.getId())
+            .requestNumber(reimbursement.getRequestNumber())
+            .submitDate(reimbursement.getSubmitDate())
+            .description(reimbursement.getDescription())
+            .status(reimbursement.getStatus())
+            .employeeId(reimbursement.getEmployee() != null ? reimbursement.getEmployee().getId() : null)
+            .employeeName(reimbursement.getEmployee() != null ? reimbursement.getEmployee().getName() : null)
+            .items(items)
+            .approvalHistory(approvalHistory)
+            .build();
+    }
 
     public List<ReimbursementResponse> getByUserId(Integer userId) {
         return reimbursementRequestRepository.findByEmployee_Id(userId);

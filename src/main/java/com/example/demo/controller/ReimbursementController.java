@@ -23,6 +23,11 @@ public class ReimbursementController {
     @Autowired 
     private ReimbursementService reimbursementService;
 
+    @GetMapping ("reimbursement/{id}")
+    public ResponseEntity<Object> getById(@PathVariable Integer id) {
+        return Response.generate(reimbursementService.getById(id), "Data reimbursement berhasil ditampilkan");
+    }
+
     @GetMapping ("reimbursement/user/{userId}")
     public ResponseEntity<Object> getByUserId(@PathVariable Integer userId) {
         return Response.generate(reimbursementService.getByUserId(userId), "Data reimbursement berhasil ditampilkan");

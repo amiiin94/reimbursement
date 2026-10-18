@@ -65,7 +65,7 @@ public interface ReimbursementRepository extends JpaRepository<Reimbursement, In
             (r.id, r.requestNumber, r.submitDate, e.name, r.description, r.status)
             FROM Reimbursement r
             JOIN r.employee e
-            WHERE e.employee.id = ?1
+            WHERE e.employee.id = ?1 AND r.status = 'WAITING_SUPERVISOR'
         """
     )
     List<ReimbursementBySupervisor> findBySupervisorId(Integer supervisorId);

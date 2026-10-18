@@ -40,5 +40,22 @@ public interface ApprovalRepository extends JpaRepository<Approval, Integer> {
             """)
     List<ApprovalResponse> getApproval();
 
-    
+    @Query("""
+                SELECT new com.example.demo.model.dto.response.ApprovalResponse(
+                    a.id,
+                    r.description,
+                    e.name,
+                    a.approvalLevel,
+                    a.status,
+                    a.note,
+                    a.createdAt,
+                    a.createdBy
+                )
+                FROM Approval a
+                LEFT JOIN a.employee e
+                JOIN a.reimbursementRequest r
+                WHERE r.id = ?1
+                ORDER BY a.createdAt ASC, a.id ASC
+            """)
+    List<ApprovalResponse> findByReimbursementRequestId(Integer requestId);
 }

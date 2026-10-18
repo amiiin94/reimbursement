@@ -29,4 +29,9 @@ public class ApprovalController {
     public ResponseEntity<Object> getApproval() {
         return Response.generate(approvalService.getApproval(), "Approval berhasil diambil");
     }
+
+    @GetMapping ("approval/request/{requestId}")
+    public ResponseEntity<Object> getByRequestId(@org.springframework.web.bind.annotation.PathVariable Integer requestId) {
+        return Response.generate(approvalService.getByRequestId(requestId), "Approval history berhasil diambil");
+    }
 }

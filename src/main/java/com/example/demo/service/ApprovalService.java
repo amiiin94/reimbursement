@@ -35,6 +35,8 @@ public class ApprovalService {
        return approvalRepository.getApproval();
     }
 
-    
+    public List<ApprovalResponse> getByRequestId(Integer requestId) {
+        return approvalRepository.findByReimbursementRequestId(requestId);
+    }
 }
 
